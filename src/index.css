@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall 3s ease-out forwards;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+@layer base {
+  :root {
+    --background: 270 50% 98%;
+    --foreground: 270 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 270 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 10% 10%;
+    --primary: 270 70% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 320 70% 70%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 270 30% 95%;
+    --muted-foreground: 270 10% 40%;
+    --accent: 200 70% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 30% 90%;
+    --input: 270 30% 90%;
+    --ring: 270 70% 65%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 270 30% 8%;
+    --foreground: 270 10% 95%;
+    --card: 270 25% 12%;
+    --card-foreground: 270 10% 95%;
+    --popover: 270 25% 12%;
+    --popover-foreground: 270 10% 95%;
+    --primary: 270 70% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 320 70% 70%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 270 30% 20%;
+    --muted-foreground: 270 10% 60%;
+    --accent: 200 70% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 30% 20%;
+    --input: 270 30% 20%;
+    --ring: 270 70% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/20 backdrop-blur-xl border border-white/30;
+  }
+  
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10;
+  }
+  
+  .sticker-shadow {
+    filter: drop-shadow(0 4px 12px rgba(103, 126, 234, 0.3));
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+  }
+}
