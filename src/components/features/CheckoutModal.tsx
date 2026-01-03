@@ -57,12 +57,10 @@ export function CheckoutModal({ onClose, total, offerApplied, deliveryFee: initi
   const subtotal = giftWrap ? total + giftWrapPrice : total;
   const offerDiscount = selectedOffer ? Math.round((subtotal * selectedOffer.discount) / 100) : 0;
   
-  // Calculate delivery fee based on order total and pincode
-  const calculatedDeliveryFee = shippingDetails.pincode && shippingDetails.pincode.length === 6
-    ? calculateDeliveryFee(subtotal - offerDiscount, shippingDetails.pincode)
-    : initialDeliveryFee;
+  // FREE DELIVERY ALWAYS - No delivery charges!
+  const calculatedDeliveryFee = 0;
   
-  const finalTotal = subtotal - offerDiscount + calculatedDeliveryFee;
+  const finalTotal = subtotal - offerDiscount;
 
   // Load available offers on mount
   useEffect(() => {
@@ -119,27 +117,33 @@ export function CheckoutModal({ onClose, total, offerApplied, deliveryFee: initi
       localStorage.setItem('availableOffers', JSON.stringify(updatedOffers));
     }
     
-    // Send order notification to admin
+    // Create real delivery order with Shiprocket and send SMS to admin
     try {
-      const { error: notificationError } = await supabase.functions.invoke('send-order-notification', {
+      const { data: deliveryData, error: deliveryError } = await supabase.functions.invoke('create-delivery-order', {
         body: {
           orderId: newOrderId,
           orderTotal: finalTotal,
           customerName: shippingDetails.name,
           customerPhone: shippingDetails.phone,
           customerEmail: shippingDetails.email,
+          shippingAddress: {
+            address: shippingDetails.address,
+            city: shippingDetails.city,
+            state: shippingDetails.state,
+            pincode: shippingDetails.pincode,
+            country: shippingDetails.country,
+          },
           items: items,
-          shippingAddress: `${shippingDetails.address}, ${shippingDetails.city}, ${shippingDetails.state} - ${shippingDetails.pincode}`,
         },
       });
       
-      if (notificationError) {
-        console.error('Notification error (non-critical):', notificationError);
+      if (deliveryError) {
+        console.error('Delivery order error (non-critical):', deliveryError);
       } else {
-        console.log('✅ Order notification sent to admin');
+        console.log('✅ Delivery order created:', deliveryData);
       }
-    } catch (notifError) {
-      console.error('Failed to send notification (non-critical):', notifError);
+    } catch (deliveryErr) {
+      console.error('Failed to create delivery order (non-critical):', deliveryErr);
     }
     
     setOrderId(newOrderId);
@@ -421,17 +425,21 @@ export function CheckoutModal({ onClose, total, offerApplied, deliveryFee: initi
                   <Truck className="w-3 h-3" />
                   <span>Delivery Fee</span>
                 </div>
-                {calculatedDeliveryFee === 0 ? (
-                  <span className="text-green-600 font-medium">FREE ✓</span>
-                ) : (
-                  <span>₹{calculatedDeliveryFee}</span>
-                )}
+                <span className="text-green-600 font-bold">FREE ✓</span>
               </div>
               
-              {subtotal - offerDiscount < 50 && calculatedDeliveryFee > 0 && (
-                <div className="bg-blue-50 dark:bg-blue-950 p-2 rounded-lg">
-                  <p className="text-xs text-blue-700 dark:text-blue-400">
-                    💡 Add ₹{(50 - (subtotal - offerDiscount)).toFixed(2)} more to get FREE delivery!
+              {subtotal - offerDiscount >= 50 && (
+                <div className="bg-green-50 dark:bg-green-950 p-2 rounded-lg">
+                  <p className="text-xs text-green-700 dark:text-green-400 font-medium">
+                    🎉 FREE delivery unlocked on orders over ₹50!
+                  </p>
+                </div>
+              )}
+              
+              {subtotal - offerDiscount < 50 && (
+                <div className="bg-yellow-50 dark:bg-yellow-950 p-2 rounded-lg">
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400">
+                    💡 Add ₹{(50 - (subtotal - offerDiscount)).toFixed(2)} more to qualify for FREE delivery offer!
                   </p>
                 </div>
               )}
