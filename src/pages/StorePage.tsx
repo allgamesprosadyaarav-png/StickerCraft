@@ -28,6 +28,8 @@ import { LimitedEditionDrops } from '../components/features/LimitedEditionDrops'
 import { ARStickerPreview } from '../components/features/ARStickerPreview';
 import { StickerTrading } from '../components/features/StickerTrading';
 import { VoiceSearch } from '../components/features/VoiceSearch';
+import { PhotoBoothMode } from '../components/features/PhotoBoothMode';
+import { StickerBattleArena } from '../components/features/StickerBattleArena';
 import { Button } from '../components/ui/button';
 
 type FilterType = 'all' | 'stickers' | 'keychains' | 'standard' | 'anime' | 'minecraft' | 'food' | 'minimalist' | 'gaming' | 'packs' | 'wishlist' | 'premium' | 'faq';
@@ -298,6 +300,8 @@ export function StorePage({ onNavigate }: StorePageProps) {
           </Button>
           <div className="flex items-center justify-center">
             <VoiceSearch onSearch={handleVoiceSearch} />
+            <PhotoBoothMode />
+            <StickerBattleArena />
           </div>
         </div>
       </div>
