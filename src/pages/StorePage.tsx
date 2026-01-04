@@ -25,11 +25,11 @@ import { AboutUs } from '../components/features/AboutUs';
 import { AchievementSystem } from '../components/features/AchievementSystem';
 import { DailyChallenges } from '../components/features/DailyChallenges';
 import { LimitedEditionDrops } from '../components/features/LimitedEditionDrops';
-import { ARStickerPreview } from '../components/features/ARStickerPreview';
 import { StickerTrading } from '../components/features/StickerTrading';
-import { VoiceSearch } from '../components/features/VoiceSearch';
 import { PhotoBoothMode } from '../components/features/PhotoBoothMode';
-import { StickerBattleArena } from '../components/features/StickerBattleArena';
+import { StickerSlotsGame } from '../components/features/StickerSlotsGame';
+import { TreasureHunt, HiddenTreasure } from '../components/features/TreasureHunt';
+import { VirtualMuseum } from '../components/features/VirtualMuseum';
 import { Button } from '../components/ui/button';
 
 type FilterType = 'all' | 'stickers' | 'keychains' | 'standard' | 'anime' | 'minecraft' | 'food' | 'minimalist' | 'gaming' | 'packs' | 'wishlist' | 'premium' | 'faq';
@@ -54,19 +54,11 @@ export function StorePage({ onNavigate }: StorePageProps) {
   const [showAchievements, setShowAchievements] = useState(false);
   const [showChallenges, setShowChallenges] = useState(false);
   const [showLimitedDrops, setShowLimitedDrops] = useState(false);
-  const [showARPreview, setShowARPreview] = useState<Product | null>(null);
   const [showTrading, setShowTrading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [moodRecommendations, setMoodRecommendations] = useState<Product[]>([]);
 
   const allProductsToShow = filter === 'premium' ? ALL_PREMIUM_PRODUCTS : ALL_PRODUCTS;
 
   const filteredProducts = allProductsToShow.filter((product) => {
-    // Search filter
-    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    
     if (filter === 'all') return true;
     if (filter === 'premium') return true; // Already filtered above
     if (filter === 'wishlist') return wishlistItems.some(item => item.id === product.id);
@@ -75,11 +67,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
     if (filter === 'keychains') return product.type === 'keychain';
     return product.category === filter;
   });
-
-  const handleVoiceSearch = (query: string) => {
-    setSearchQuery(query);
-    setFilter('all');
-  };
 
   const handleBuyPack = (pack: typeof STICKER_PACKS[0]) => {
     // Add pack as a custom product
@@ -146,8 +133,10 @@ export function StorePage({ onNavigate }: StorePageProps) {
       {showAchievements && <AchievementSystem onClose={() => setShowAchievements(false)} />}
       {showChallenges && <DailyChallenges onClose={() => setShowChallenges(false)} />}
       {showLimitedDrops && <LimitedEditionDrops onClose={() => setShowLimitedDrops(false)} />}
-      {showARPreview && <ARStickerPreview product={showARPreview} onClose={() => setShowARPreview(null)} />}
       {showTrading && <StickerTrading onClose={() => setShowTrading(false)} />}
+      <StickerSlotsGame />
+      <TreasureHunt />
+      <VirtualMuseum />
       
       <div className="container mx-auto px-4 py-8">
       {/* Limited Edition Alert Banner */}
@@ -276,19 +265,10 @@ export function StorePage({ onNavigate }: StorePageProps) {
       {/* NEW FEATURES SHOWCASE */}
       <div className="mb-8 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 border-2 border-cyan-500/30 rounded-2xl p-6">
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold mb-1">🚀 New Features</h2>
+          <h2 className="text-2xl font-bold mb-1">🚀 Creative Features <HiddenTreasure treasureId="treasure-3" /></h2>
           <p className="text-muted-foreground text-sm">Experience stickers in a whole new way!</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button
-            onClick={() => setShowARPreview(filteredProducts[0])}
-            variant="outline"
-            className="flex-col h-auto py-6 gap-2 hover:scale-105 transition-transform bg-gradient-to-br from-pink-500/10 to-purple-500/10"
-          >
-            <div className="text-4xl">📷</div>
-            <span className="font-semibold">AR Preview</span>
-            <span className="text-xs text-muted-foreground">See stickers in real life</span>
-          </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button
             onClick={() => setShowTrading(true)}
             variant="outline"
@@ -299,9 +279,7 @@ export function StorePage({ onNavigate }: StorePageProps) {
             <span className="text-xs text-muted-foreground">Trade with collectors</span>
           </Button>
           <div className="flex items-center justify-center">
-            <VoiceSearch onSearch={handleVoiceSearch} />
             <PhotoBoothMode />
-            <StickerBattleArena />
           </div>
         </div>
       </div>
@@ -309,17 +287,7 @@ export function StorePage({ onNavigate }: StorePageProps) {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-bold">Filter Products</h2>
-          {searchQuery && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSearchQuery('')}
-              className="ml-auto"
-            >
-              Clear Search: "{searchQuery}" ✕
-            </Button>
-          )}
+          <h2 className="text-xl font-bold">Filter Products <HiddenTreasure treasureId="treasure-4" /></h2>
         </div>
         
         <div className="flex flex-wrap gap-2">
