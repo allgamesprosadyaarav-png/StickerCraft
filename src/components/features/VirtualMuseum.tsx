@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Museum, X, ChevronLeft, ChevronRight, Info, Heart, ShoppingCart } from 'lucide-react';
+import { Building2, X, ChevronLeft, ChevronRight, Info, Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ALL_PRODUCTS } from '../../constants/products';
@@ -72,7 +72,7 @@ export function VirtualMuseum() {
         onClick={() => setIsOpen(true)}
         className="fixed bottom-72 right-6 z-40 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform"
       >
-        <Museum className="w-6 h-6" />
+        <Building2 className="w-6 h-6" />
       </button>
 
       {isOpen && (
@@ -83,7 +83,7 @@ export function VirtualMuseum() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2 text-2xl text-white">
-                      <Museum className="w-6 h-6 text-purple-400" />
+                      <Building2 className="w-6 h-6 text-purple-400" />
                       Virtual Sticker Museum
                     </CardTitle>
                     <p className="text-sm text-slate-400 mt-1">
