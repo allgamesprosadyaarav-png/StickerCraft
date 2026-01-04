@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Swords, X, Trophy, TrendingUp, Users } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { PRODUCTS } from '../../constants/products';
+import { ALL_PRODUCTS } from '../../constants/products';
 import { toast } from '../../hooks/use-toast';
 
 interface BattleStats {
@@ -25,7 +25,7 @@ export function StickerBattleArena() {
       setBattleStats(JSON.parse(savedStats));
     } else {
       // Initialize stats for all products
-      const initialStats = PRODUCTS.filter(p => p.type === 'sticker').map(p => ({
+      const initialStats = ALL_PRODUCTS.filter(p => p.type === 'sticker').map(p => ({
         productId: p.id,
         wins: 0,
         losses: 0,
@@ -36,7 +36,7 @@ export function StickerBattleArena() {
   }, []);
 
   const startNewBattle = () => {
-    const stickers = PRODUCTS.filter(p => p.type === 'sticker');
+    const stickers = ALL_PRODUCTS.filter(p => p.type === 'sticker');
     const shuffled = [...stickers].sort(() => Math.random() - 0.5);
     setCurrentBattle([shuffled[0], shuffled[1]]);
     setShowLeaderboard(false);
@@ -81,7 +81,7 @@ export function StickerBattleArena() {
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 10)
       .map(stat => {
-        const product = PRODUCTS.find(p => p.id === stat.productId);
+        const product = ALL_PRODUCTS.find(p => p.id === stat.productId);
         return { ...stat, product };
       })
       .filter(item => item.product);

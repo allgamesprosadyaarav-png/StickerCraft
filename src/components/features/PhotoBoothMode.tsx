@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { Camera, X, Download, Image as ImageIcon, Sparkles, RotateCw } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { PRODUCTS } from '../../constants/products';
+import { ALL_PRODUCTS } from '../../constants/products';
 
 interface StickerOnPhoto {
   id: string;
@@ -84,7 +84,7 @@ export function PhotoBoothMode() {
       // Draw stickers
       const stickerPromises = stickers.map((sticker) => {
         return new Promise<void>((resolve) => {
-          const product = PRODUCTS.find(p => p.id === sticker.productId);
+          const product = ALL_PRODUCTS.find(p => p.id === sticker.productId);
           if (!product) {
             resolve();
             return;
@@ -126,7 +126,7 @@ export function PhotoBoothMode() {
     };
   };
 
-  const animeStickers = PRODUCTS.filter(p => p.category === 'anime' && p.type === 'sticker').slice(0, 12);
+  const animeStickers = ALL_PRODUCTS.filter(p => p.category === 'anime' && p.type === 'sticker').slice(0, 12);
 
   return (
     <>
@@ -192,7 +192,7 @@ export function PhotoBoothMode() {
                         />
                         
                         {stickers.map((sticker) => {
-                          const product = PRODUCTS.find(p => p.id === sticker.productId);
+                          const product = ALL_PRODUCTS.find(p => p.id === sticker.productId);
                           if (!product) return null;
 
                           return (
