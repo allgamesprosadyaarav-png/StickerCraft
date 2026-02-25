@@ -27,8 +27,6 @@ import { DailyChallenges } from '../components/features/DailyChallenges';
 import { LimitedEditionDrops } from '../components/features/LimitedEditionDrops';
 import { StickerTrading } from '../components/features/StickerTrading';
 import { PhotoBoothMode } from '../components/features/PhotoBoothMode';
-import { StickerSlotsGame } from '../components/features/StickerSlotsGame';
-import { TreasureHunt, HiddenTreasure } from '../components/features/TreasureHunt';
 import { VirtualMuseum } from '../components/features/VirtualMuseum';
 import { Button } from '../components/ui/button';
 
@@ -134,8 +132,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
       {showChallenges && <DailyChallenges onClose={() => setShowChallenges(false)} />}
       {showLimitedDrops && <LimitedEditionDrops onClose={() => setShowLimitedDrops(false)} />}
       {showTrading && <StickerTrading onClose={() => setShowTrading(false)} />}
-      <StickerSlotsGame />
-      <TreasureHunt />
       <VirtualMuseum />
       
       <div className="container mx-auto px-4 py-8">
@@ -265,7 +261,7 @@ export function StorePage({ onNavigate }: StorePageProps) {
       {/* NEW FEATURES SHOWCASE */}
       <div className="mb-8 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 border-2 border-cyan-500/30 rounded-2xl p-6">
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold mb-1">🚀 Creative Features <HiddenTreasure treasureId="treasure-3" /></h2>
+          <h2 className="text-2xl font-bold mb-1">🚀 Creative Features</h2>
           <p className="text-muted-foreground text-sm">Experience stickers in a whole new way!</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,7 +283,7 @@ export function StorePage({ onNavigate }: StorePageProps) {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-bold">Filter Products <HiddenTreasure treasureId="treasure-4" /></h2>
+          <h2 className="text-xl font-bold">Filter Products</h2>
         </div>
         
         <div className="flex flex-wrap gap-2">

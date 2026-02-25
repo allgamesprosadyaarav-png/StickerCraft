@@ -15,7 +15,6 @@ import { AngilaAIButton } from './components/features/AngilaAIButton';
 import { VerifiedReviews } from './components/features/VerifiedReviews';
 import { DailyLuckyDraw } from './components/features/DailyLuckyDraw';
 import { LiveChatButton } from './components/features/LiveChatButton';
-import { HiddenTreasure } from './components/features/TreasureHunt';
 import { Footer } from './components/layout/Footer';
 import { useCartStore } from './stores/cartStore';
 import { useKonami } from './hooks/use-konami';
@@ -74,9 +73,6 @@ function App() {
       
       <div className="relative z-10 flex-1">
         <Header onNavigate={setCurrentPage} currentPage={currentPage} />
-        <div className="container mx-auto px-4 py-2 text-center">
-          <HiddenTreasure treasureId="treasure-1" />
-        </div>
         
         <main>
           {currentPage === 'store' && <StorePage onNavigate={setCurrentPage} />}
