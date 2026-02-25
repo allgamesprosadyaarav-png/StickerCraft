@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, RedeemedReward } from '../types';
+import { loadUserCart } from './cartStore';
+import { loadUserOrders } from './orderStore';
 
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   redeemedRewards: RedeemedReward[];
-  login: (userData: Omit<User, 'id' | 'loyaltyPoints' | 'loyaltyTier' | 'isPremium'>) => void;
+  login: (userData: Omit<User, 'id' | 'loyaltyPoints' | 'loyaltyTier' | 'isPremium'>) => Promise<void>;
   logout: () => void;
   updateLoyaltyPoints: (points: number) => void;
   updateLoyaltyTier: () => void;
@@ -28,7 +30,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       redeemedRewards: [],
-      login: (userData) => {
+      login: async (userData) => {
         const newUser: User = {
           ...userData,
           id: crypto.randomUUID(),
@@ -37,6 +39,10 @@ export const useAuthStore = create<AuthState>()(
           isPremium: false,
         };
         set({ user: newUser, isAuthenticated: true });
+        
+        // Load user's cart and orders from database
+        await loadUserCart(newUser.id);
+        await loadUserOrders(newUser.id);
       },
       logout: () => set({ user: null, isAuthenticated: false, redeemedRewards: [] }),
       updateLoyaltyPoints: (points) =>
