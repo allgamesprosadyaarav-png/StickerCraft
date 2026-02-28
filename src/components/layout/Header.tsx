@@ -1,10 +1,10 @@
-import { ShoppingCart, User, LogOut, Award, Palette, Instagram } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Award, Palette, Instagram, Shield } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import { Button } from '../ui/button';
 
 interface HeaderProps {
-  onNavigate: (page: 'store' | 'cart' | 'orders' | 'custom') => void;
+  onNavigate: (page: 'store' | 'cart' | 'orders' | 'custom' | 'admin') => void;
   currentPage: string;
 }
 
@@ -73,6 +73,16 @@ export function Header({ onNavigate, currentPage }: HeaderProps) {
                 >
                   <User className="w-4 h-4 mr-2" />
                   Orders
+                </Button>
+
+                <Button
+                  variant={currentPage === 'admin' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => onNavigate('admin')}
+                  className="hidden md:flex gap-2 bg-purple-500/20 hover:bg-purple-500/30"
+                >
+                  <Shield className="w-4 h-4" />
+                  Admin
                 </Button>
               </>
             )}

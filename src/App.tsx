@@ -5,6 +5,7 @@ import { StorePage } from './pages/StorePage';
 import { CartPage } from './pages/CartPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { CustomDesignPage } from './pages/CustomDesignPage';
+import { AdminDashboard } from './pages/AdminDashboard';
 import { Header } from './components/layout/Header';
 import { FloatingStickers } from './components/layout/FloatingStickers';
 
@@ -20,7 +21,7 @@ import { useCartStore } from './stores/cartStore';
 import { useKonami } from './hooks/use-konami';
 import { toast } from './hooks/use-toast';
 
-type Page = 'store' | 'cart' | 'orders' | 'custom';
+type Page = 'store' | 'cart' | 'orders' | 'custom' | 'admin';
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -79,6 +80,7 @@ function App() {
           {currentPage === 'cart' && <CartPage />}
           {currentPage === 'orders' && <OrdersPage />}
           {currentPage === 'custom' && <CustomDesignPage />}
+          {currentPage === 'admin' && <AdminDashboard />}
         </main>
       </div>
 
