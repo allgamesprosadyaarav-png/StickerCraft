@@ -56,22 +56,17 @@ Create an adorable, professional-quality sticker that fans and collectors will l
 
     // Call OnSpace AI with image generation model
     const requestBody = {
-      model: 'google/gemini-2.5-flash-image-preview',
-      messages: [
-        {
-          role: 'user',
-          content: enhancedPrompt
-        }
-      ],
-      modalities: ['image', 'text'],
-      image_config: {
-        aspect_ratio: '1:1'
-      },
+      model: 'black-forest-labs/flux-1.1-pro',
+      prompt: enhancedPrompt,
+      image_size: '1024x1024',
+      num_inference_steps: 28,
+      guidance_scale: 3.5,
+      num_images: 1,
     };
 
     console.log('Sending request to AI service...');
 
-    const response = await fetch(`${ONSPACE_AI_BASE_URL}/chat/completions`, {
+    const response = await fetch(`${ONSPACE_AI_BASE_URL}/images/generations`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${ONSPACE_AI_API_KEY}`,
@@ -112,15 +107,13 @@ Create an adorable, professional-quality sticker that fans and collectors will l
     const data = await response.json();
     console.log('AI Response received successfully');
     console.log('Response structure:', {
-      hasChoices: !!data.choices,
-      choicesLength: data.choices?.length,
-      hasImages: !!data.choices?.[0]?.message?.images,
-      imagesLength: data.choices?.[0]?.message?.images?.length
+      hasData: !!data.data,
+      dataLength: data.data?.length
     });
 
     // Extract the image from the response
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    const description = data.choices?.[0]?.message?.content;
+    const imageUrl = data.data?.[0]?.url;
+    const description = prompt;
 
     if (!imageUrl) {
       console.error('No image URL in response:', JSON.stringify(data, null, 2));
