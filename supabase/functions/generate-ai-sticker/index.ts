@@ -66,7 +66,7 @@ Create an adorable, professional-quality sticker that fans and collectors will l
 
     console.log('Sending request to AI service...');
 
-    const response = await fetch(`${ONSPACE_AI_BASE_URL}/images/generations`, {
+    const response = await fetch(`${ONSPACE_AI_BASE_URL}/v1/images/generations`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${ONSPACE_AI_API_KEY}`,
