@@ -31,13 +31,36 @@ Deno.serve(async (req) => {
 
     console.log('Using AI endpoint:', ONSPACE_AI_BASE_URL);
 
+    // Enhanced prompt for better character and person generation
+    const enhancedPrompt = `Create a vibrant, high-quality sticker artwork of: ${prompt}
+
+🎨 STICKER DESIGN REQUIREMENTS:
+✓ Style: Kawaii/chibi art style with big expressive eyes and cute proportions
+✓ Character Details: If it's a person or character, make them instantly recognizable with their iconic features, clothing, and accessories
+✓ Colors: Ultra vibrant, saturated colors that pop - use bold, eye-catching color combinations
+✓ Outlines: Thick black outlines (3-4px) around all elements for that professional sticker look
+✓ Composition: Centered character with white border space, works perfectly in a circular sticker format
+✓ Background: Simple gradient or solid color that makes the character stand out
+✓ Details: Sharp, crisp details with smooth gradients and professional shading
+✓ Quality: Print-ready quality at high resolution
+✓ NO TEXT: Do not include any text or words in the image
+✓ Expression: Happy, friendly, and appealing facial expression
+
+💡 IMPORTANT: If this is a famous person, celebrity, anime character, movie character, or anyone recognizable:
+- Capture their most iconic and distinctive features accurately
+- Include their signature hairstyle, clothing, accessories, or props
+- Make them instantly identifiable while maintaining the cute sticker art style
+- Use their typical color scheme and visual identity
+
+Create an adorable, professional-quality sticker that fans and collectors will love!`;
+
     // Call OnSpace AI with image generation model
     const requestBody = {
       model: 'google/gemini-2.5-flash-image-preview',
       messages: [
         {
           role: 'user',
-          content: `Create a high-quality, vibrant, and detailed sticker design based on this description: "${prompt}". \n\nDesign requirements:\n- Make it colorful, fun, and eye-catching\n- Suitable for printing as a physical sticker\n- Clear, bold outlines and shapes\n- No text or words in the image\n- Centered composition that works well in a circle\n- Professional quality with sharp details\n- Appealing for sticker collectors and anime/gaming fans\n\nCreate a beautiful, printable sticker artwork!`
+          content: enhancedPrompt
         }
       ],
       modalities: ['image', 'text'],

@@ -14,16 +14,18 @@ const supabase = createClient(
 );
 
 const EXAMPLE_PROMPTS = [
-  'Cute kawaii panda eating ramen noodles',
-  'Cyberpunk neon dragon breathing fire',
-  'Retro 80s vaporwave sunset with palm trees',
-  'Anime-style magical girl with cherry blossoms',
-  'Pixel art game character wielding a sword',
-  'Holographic rainbow unicorn with stars',
-  'Minimalist mountain landscape at sunset',
-  'Cartoon space astronaut floating in galaxy',
-  'Chibi anime cat with big sparkly eyes',
-  'Cute coffee cup with kawaii face and steam',
+  'Elon Musk in chibi style with rocket',
+  'Taylor Swift with guitar and sparkles',
+  'Iron Man in cute kawaii style',
+  'Cristiano Ronaldo doing bicycle kick',
+  'Harry Potter with wand and glasses',
+  'Pikachu with thunder bolt effects',
+  'Spider-Man swinging through city',
+  'BTS Jungkook in purple outfit',
+  'Wednesday Addams with braids',
+  'Lionel Messi with soccer ball',
+  'Billie Eilish in neon style',
+  'Deadpool making peace sign',
 ];
 
 export function AIGeneratorTab() {
@@ -165,20 +167,25 @@ export function AIGeneratorTab() {
           <Sparkles className="w-8 h-8 text-pink-500 animate-pulse" />
         </div>
         <p className="text-muted-foreground">
-          Describe your dream sticker and let AI create it for you! ✨
+          Generate stickers of ANY person, character, or celebrity! ✨
         </p>
+        <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-2 border-purple-500/20 rounded-lg p-4 max-w-2xl mx-auto">
+          <p className="text-sm font-medium text-purple-600 dark:text-purple-400">
+            💡 Try: Famous people, anime characters, movie heroes, celebrities, your favorite stars!
+          </p>
+        </div>
       </div>
 
       {/* Input Section */}
       <Card className="glass">
         <CardContent className="p-6 space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Describe your sticker:</label>
+            <label className="text-sm font-medium">Who or what do you want as a sticker?</label>
             <div className="flex gap-2">
               <Input
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., Cute kawaii panda eating ramen"
+                placeholder="e.g., Elon Musk, Spider-Man, Taylor Swift, Pikachu, Iron Man..."
                 className="flex-1"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !isGenerating) {
@@ -208,7 +215,7 @@ export function AIGeneratorTab() {
 
           {/* Example Prompts */}
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Try these examples:</p>
+            <p className="text-xs text-muted-foreground font-medium">🔥 Popular characters to try:</p>
             <div className="flex flex-wrap gap-2">
               {EXAMPLE_PROMPTS.map((example) => (
                 <Button
@@ -216,7 +223,7 @@ export function AIGeneratorTab() {
                   variant="outline"
                   size="sm"
                   onClick={() => setPrompt(example)}
-                  className="text-xs"
+                  className="text-xs hover:bg-purple-500/10 hover:border-purple-500"
                   disabled={isGenerating}
                 >
                   {example}
@@ -298,12 +305,15 @@ export function AIGeneratorTab() {
           <div className="flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-purple-500 mt-0.5" />
             <div className="space-y-1 text-sm">
-              <p className="font-medium">How AI Sticker Generation Works:</p>
+              <p className="font-medium">🎨 AI Sticker Generation - Create ANYTHING:</p>
               <ul className="text-muted-foreground space-y-1 ml-4 list-disc">
-                <li>Describe your desired sticker in detail</li>
-                <li>Our AI creates a unique design just for you</li>
-                <li>AI-generated stickers are priced at ₹15 each</li>
-                <li>Download and use them anywhere!</li>
+                <li>✅ Famous people & celebrities (Elon Musk, Taylor Swift, etc.)</li>
+                <li>✅ Movie & TV characters (Iron Man, Harry Potter, Wednesday, etc.)</li>
+                <li>✅ Anime characters (Naruto, Goku, Pikachu, etc.)</li>
+                <li>✅ Sports stars (Messi, Ronaldo, LeBron James, etc.)</li>
+                <li>✅ Custom designs & original characters</li>
+                <li>💰 Only ₹15 per AI-generated sticker</li>
+                <li>📥 Download in high quality for printing</li>
               </ul>
             </div>
           </div>
