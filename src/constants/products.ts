@@ -298,39 +298,7 @@ export const ANIME_KEYCHAINS: KeychainProduct[] = [
 
 ];
 
-// Food & Cute Keychains (₹110 each)
-export const FOOD_KEYCHAINS: KeychainProduct[] = [
-  {
-    id: 'keychain-food-1',
-    name: 'Boba Tea Keychain',
-    type: 'keychain',
-    category: 'food',
-    price: 110,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=boba&backgroundColor=d4a373,8b4513',
-    description: 'Cute bubble tea charm',
-    caseOptions: CASE_OPTIONS,
-  },
-  {
-    id: 'keychain-food-2',
-    name: 'Sushi Roll Keychain',
-    type: 'keychain',
-    category: 'food',
-    price: 110,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=sushi&backgroundColor=ff6b6b,ee5a6f',
-    description: 'Kawaii sushi roll',
-    caseOptions: CASE_OPTIONS,
-  },
-  {
-    id: 'keychain-food-3',
-    name: 'Cupcake Keychain',
-    type: 'keychain',
-    category: 'food',
-    price: 110,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=cupcake&backgroundColor=ffb3ba,ffdfba',
-    description: 'Sweet cupcake charm',
-    caseOptions: CASE_OPTIONS,
-  },
-];
+// Food & Cute Keychains - REMOVED per user request
 
 // Minimalist Keychains - REMOVED per user request
 
@@ -498,7 +466,6 @@ export const ALL_PRODUCTS: Product[] = [
   ...MINECRAFT_STICKERS,
   ...ANIME_STICKERS,
   ...ANIME_KEYCHAINS,
-  ...FOOD_KEYCHAINS,
   ...GAMING_KEYCHAINS,
 ];
 
@@ -509,6 +476,5 @@ export const ALL_PREMIUM_PRODUCTS: Product[] = [
 
 export const ALL_KEYCHAINS: KeychainProduct[] = [
   ...ANIME_KEYCHAINS,
-  ...FOOD_KEYCHAINS,
   ...GAMING_KEYCHAINS,
 ];

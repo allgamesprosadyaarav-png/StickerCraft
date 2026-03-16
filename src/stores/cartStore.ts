@@ -31,55 +31,87 @@ export const useCartStore = create<CartState>()((set, get) => ({
         return;
       }
 
-      // Validate product data
-      if (!product || !product.id || !product.name || typeof product.price !== 'number') {
+      // Validate product data with extensive checks
+      if (!product || 
+          !product.id || 
+          !product.name || 
+          typeof product.price !== 'number' || 
+          !product.type || 
+          !product.category ||
+          !product.image) {
         console.error('Invalid product data:', product);
         toast({
           title: 'Invalid product',
-          description: 'Unable to add this item to cart',
+          description: 'Unable to add this item to cart. Please refresh and try again.',
           variant: 'destructive',
         });
         return;
       }
 
+      // Create a clean product object to avoid any reference issues
+      const cleanProduct = {
+        id: String(product.id),
+        name: String(product.name),
+        type: product.type,
+        category: product.category,
+        price: Number(product.price),
+        image: String(product.image),
+        description: product.description || '',
+      };
+
       // Update state first (optimistic update)
       set((state) => {
-        const currentItems = Array.isArray(state.items) ? state.items : [];
-        const existingItem = currentItems.find(
-          (item) => item?.product?.id === product?.id && 
-          item?.selectedCase?.id === selectedCase?.id
-        );
-        
-        if (existingItem) {
-          return {
-            items: currentItems.map((item) =>
-              item?.product?.id === product?.id && item?.selectedCase?.id === selectedCase?.id
-                ? { ...item, quantity: (item.quantity || 0) + 1 }
-                : item
-            )
+        try {
+          const currentItems = Array.isArray(state.items) ? state.items.filter(item => item && item.product) : [];
+          const existingItem = currentItems.find(
+            (item) => item?.product?.id === cleanProduct.id && 
+            item?.selectedCase?.id === selectedCase?.id
+          );
+          
+          if (existingItem) {
+            return {
+              items: currentItems.map((item) =>
+                item?.product?.id === cleanProduct.id && item?.selectedCase?.id === selectedCase?.id
+                  ? { ...item, quantity: (item.quantity || 0) + 1 }
+                  : item
+              ).filter(item => item && item.product)
+            };
+          }
+          
+          const newItem: CartItem = { 
+            product: cleanProduct, 
+            quantity: 1, 
+            selectedCase: selectedCase || undefined, 
+            customization: customization || undefined 
           };
+          return { items: [...currentItems, newItem] };
+        } catch (stateError) {
+          console.error('Error updating state:', stateError);
+          return state; // Return unchanged state on error
         }
-        
-        const newItem: CartItem = { product, quantity: 1, selectedCase, customization };
-        return { items: [...currentItems, newItem] };
       });
 
-      // Then save to database (async)
-      const currentState = get();
-      await saveCartToDatabase(userId, currentState.items).catch((err) => {
-        console.error('Failed to save to database:', err);
-        // Don't remove from state - keep in local state even if DB save fails
-      });
-
+      // Show success message immediately
       toast({
         title: 'Added to cart! 🎉',
-        description: `${product.name} has been added to your cart`,
+        description: `${cleanProduct.name} has been added to your cart`,
       });
+
+      // Then save to database (async, non-blocking)
+      setTimeout(async () => {
+        try {
+          const currentState = get();
+          await saveCartToDatabase(userId, currentState.items);
+        } catch (err) {
+          console.error('Failed to save to database:', err);
+          // Don't show error to user - cart still works locally
+        }
+      }, 100);
     } catch (error: any) {
       console.error('Error adding item to cart:', error);
       toast({
         title: 'Error adding to cart',
-        description: error?.message || 'Please try again',
+        description: 'Please refresh the page and try again',
         variant: 'destructive',
       });
     }

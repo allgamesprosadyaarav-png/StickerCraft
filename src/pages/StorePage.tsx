@@ -93,7 +93,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
     { label: 'Anime Stickers', value: 'anime' },
     { label: 'All Keychains', value: 'keychains' },
     { label: 'Anime Keychains', value: 'anime' },
-    { label: 'Food Keychains', value: 'food' },
     { label: 'Gaming Keychains', value: 'gaming' },
     { label: '❓ Frequently Asked Questions', value: 'faq' },
   ];

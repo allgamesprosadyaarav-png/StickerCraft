@@ -29,8 +29,25 @@ export function CartPage() {
 
   const { items, removeItem, updateQuantity, getTotal, shouldApplyOffer, getKeychainCount } = cartStore;
 
-  // Ensure items is always an array
-  const safeItems = Array.isArray(items) ? items.filter(item => item?.product?.id) : [];
+  // Ensure items is always an array with complete validation
+  const safeItems = Array.isArray(items) 
+    ? items.filter(item => {
+        try {
+          return item && 
+                 item.product && 
+                 item.product.id && 
+                 item.product.name && 
+                 typeof item.product.price === 'number' &&
+                 item.product.type &&
+                 item.product.image &&
+                 typeof item.quantity === 'number' &&
+                 item.quantity > 0;
+        } catch (e) {
+          console.error('Invalid item in cart:', e);
+          return false;
+        }
+      })
+    : [];
 
   const subtotal = getTotal();
   const keychainCount = getKeychainCount();
@@ -71,17 +88,23 @@ export function CartPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {safeItems.map((item) => (
-              <Card key={item.product.id + (item.selectedCase?.id || '')} className="glass">
-                <CardContent className="p-4">
-                  <div className="flex gap-4">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className={`w-20 h-20 object-cover rounded-lg ${
-                        item.product.type === 'sticker' ? 'rounded-full border-2 border-white' : ''
-                      }`}
-                    />
+            {safeItems.map((item) => {
+              try {
+                return (
+                  <Card key={`${item.product.id}-${item.selectedCase?.id || 'no-case'}-${Date.now()}`} className="glass">
+                    <CardContent className="p-4">
+                      <div className="flex gap-4">
+                        <img
+                          src={item.product.image || 'https://via.placeholder.com/80'}
+                          alt={item.product.name || 'Product'}
+                          className={`w-20 h-20 object-cover rounded-lg ${
+                            item.product.type === 'sticker' ? 'rounded-full border-2 border-white' : ''
+                          }`}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://via.placeholder.com/80';
+                          }}
+                        />
                     
                     <div className="flex-1 space-y-2">
                       <h3 className="font-bold">{item.product.name}</h3>
@@ -126,10 +149,15 @@ export function CartPage() {
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              } catch (error) {
+                console.error('Error rendering cart item:', error, item);
+                return null;
+              }
+            })}
           </div>
 
           {/* Order Summary */}
