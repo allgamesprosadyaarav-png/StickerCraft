@@ -14,7 +14,7 @@ import { PremiumBanner } from '../components/features/PremiumBanner';
 import { SocialBanner } from '../components/features/SocialBanner';
 import { BulkOrderDiscount } from '../components/features/BulkOrderDiscount';
 import { AIPromoCorner } from '../components/features/AIPromoCorner';
-import { LuckySpinWheel } from '../components/features/LuckySpinWheel';
+
 import { PersonalityQuiz } from '../components/features/PersonalityQuiz';
 import { MysteryBox } from '../components/features/MysteryBox';
 import { ScratchCard } from '../components/features/ScratchCard';
@@ -27,7 +27,7 @@ import { DailyChallenges } from '../components/features/DailyChallenges';
 import { LimitedEditionDrops } from '../components/features/LimitedEditionDrops';
 import { StickerTrading } from '../components/features/StickerTrading';
 import { PhotoBoothMode } from '../components/features/PhotoBoothMode';
-import { VirtualMuseum } from '../components/features/VirtualMuseum';
+
 import { Button } from '../components/ui/button';
 
 type FilterType = 'all' | 'stickers' | 'keychains' | 'standard' | 'anime' | 'minecraft' | 'food' | 'minimalist' | 'gaming' | 'packs' | 'wishlist' | 'premium' | 'faq';
@@ -43,7 +43,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
   const user = useAuthStore((state) => state.user);
 
   // Creative features modals
-  const [showSpinWheel, setShowSpinWheel] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showMysteryBox, setShowMysteryBox] = useState(false);
   const [showScratchCard, setShowScratchCard] = useState(false);
@@ -106,7 +105,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
       <AIPromoCorner onNavigate={() => onNavigate('custom')} />
       
       {/* Creative Features Modals */}
-      {showSpinWheel && <LuckySpinWheel onClose={() => setShowSpinWheel(false)} />}
       {showQuiz && (
         <PersonalityQuiz
           onClose={() => setShowQuiz(false)}
@@ -132,7 +130,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
       {showChallenges && <DailyChallenges onClose={() => setShowChallenges(false)} />}
       {showLimitedDrops && <LimitedEditionDrops onClose={() => setShowLimitedDrops(false)} />}
       {showTrading && <StickerTrading onClose={() => setShowTrading(false)} />}
-      <VirtualMuseum />
       
       <div className="container mx-auto px-4 py-8">
       {/* Limited Edition Alert Banner */}
@@ -165,14 +162,7 @@ export function StorePage({ onNavigate }: StorePageProps) {
           <p className="text-muted-foreground text-sm">Try our exciting features!</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          <Button
-            onClick={() => setShowSpinWheel(true)}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform"
-          >
-            <div className="text-3xl">🎡</div>
-            <span className="text-xs font-semibold">Lucky Spin</span>
-          </Button>
+
           <Button
             onClick={() => setShowQuiz(true)}
             variant="outline"
