@@ -8,81 +8,7 @@ export const CASE_OPTIONS: CaseOption[] = [
   { id: 'no-case', name: 'No Case', color: 'none', priceModifier: -10 },
 ];
 
-// Cartoonish Standard Stickers (₹10 each)
-export const STANDARD_STICKERS: Product[] = [
-  {
-    id: 'sticker-1',
-    name: 'Kawaii Cat',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=cat1&backgroundColor=ffd5dc,ffdfbf',
-    description: 'Adorable cartoon cat with big eyes',
-  },
-  {
-    id: 'sticker-2',
-    name: 'Happy Donut',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=donut1&backgroundColor=ffc0cb,fff8dc',
-    description: 'Smiling donut with sprinkles',
-  },
-  {
-    id: 'sticker-3',
-    name: 'Cloud Buddy',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=cloud1&backgroundColor=e0f7fa,b2ebf2',
-    description: 'Cute cloud with a happy face',
-  },
-  {
-    id: 'sticker-4',
-    name: 'Panda Dreams',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=panda1&backgroundColor=f0f0f0,d0d0d0',
-    description: 'Sleepy panda illustration',
-  },
-  {
-    id: 'sticker-5',
-    name: 'Rainbow Heart',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=heart1&backgroundColor=ffd1dc,ffe4e1',
-    description: 'Colorful heart with sparkles',
-  },
-  {
-    id: 'sticker-6',
-    name: 'Star Power',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=star1&backgroundColor=fff59d,fff176',
-    description: 'Cheerful star character',
-  },
-  {
-    id: 'sticker-7',
-    name: 'Cute Cactus',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=cactus1&backgroundColor=c8e6c9,a5d6a7',
-    description: 'Smiling cactus in a pot',
-  },
-  {
-    id: 'sticker-8',
-    name: 'Pizza Slice',
-    type: 'sticker',
-    category: 'standard',
-    price: 10,
-    image: 'https://api.dicebear.com/7.x/bottts/svg?seed=pizza1&backgroundColor=ffccbc,ffab91',
-    description: 'Happy pizza slice with toppings',
-  },
-];
+// Cartoonish Standard Stickers - REMOVED per user request
 
 // Minecraft Stickers (₹20 each) - Official Minecraft characters and items
 export const MINECRAFT_STICKERS: Product[] = [
@@ -406,39 +332,7 @@ export const FOOD_KEYCHAINS: KeychainProduct[] = [
   },
 ];
 
-// Minimalist Keychains (₹110 each)
-export const MINIMALIST_KEYCHAINS: KeychainProduct[] = [
-  {
-    id: 'keychain-min-1',
-    name: 'Geometric Moon',
-    type: 'keychain',
-    category: 'minimalist',
-    price: 110,
-    image: 'https://api.dicebear.com/7.x/shapes/svg?seed=moon&backgroundColor=2c3e50',
-    description: 'Minimal moon design',
-    caseOptions: CASE_OPTIONS,
-  },
-  {
-    id: 'keychain-min-2',
-    name: 'Mountain Peak',
-    type: 'keychain',
-    category: 'minimalist',
-    price: 110,
-    image: 'https://api.dicebear.com/7.x/shapes/svg?seed=mountain&backgroundColor=34495e',
-    description: 'Simple mountain silhouette',
-    caseOptions: CASE_OPTIONS,
-  },
-  {
-    id: 'keychain-min-3',
-    name: 'Wave Pattern',
-    type: 'keychain',
-    category: 'minimalist',
-    price: 110,
-    image: 'https://api.dicebear.com/7.x/shapes/svg?seed=wave&backgroundColor=3498db',
-    description: 'Ocean wave minimal art',
-    caseOptions: CASE_OPTIONS,
-  },
-];
+// Minimalist Keychains - REMOVED per user request
 
 // Gaming Keychains (₹110 each)
 export const GAMING_KEYCHAINS: KeychainProduct[] = [
@@ -601,12 +495,10 @@ export const PREMIUM_KEYCHAINS: KeychainProduct[] = [
 ];
 
 export const ALL_PRODUCTS: Product[] = [
-  ...STANDARD_STICKERS,
   ...MINECRAFT_STICKERS,
   ...ANIME_STICKERS,
   ...ANIME_KEYCHAINS,
   ...FOOD_KEYCHAINS,
-  ...MINIMALIST_KEYCHAINS,
   ...GAMING_KEYCHAINS,
 ];
 
@@ -618,6 +510,5 @@ export const ALL_PREMIUM_PRODUCTS: Product[] = [
 export const ALL_KEYCHAINS: KeychainProduct[] = [
   ...ANIME_KEYCHAINS,
   ...FOOD_KEYCHAINS,
-  ...MINIMALIST_KEYCHAINS,
   ...GAMING_KEYCHAINS,
 ];

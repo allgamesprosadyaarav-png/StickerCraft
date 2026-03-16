@@ -89,13 +89,11 @@ export function StorePage({ onNavigate }: StorePageProps) {
     { label: '🎁 Sticker Packs', value: 'packs', icon: Package },
     { label: '❤️ Wishlist', value: 'wishlist', icon: Heart },
     { label: 'All Stickers', value: 'stickers' },
-    { label: 'Cartoon Stickers', value: 'standard' },
     { label: '⛏️ Minecraft Stickers', value: 'minecraft' },
     { label: 'Anime Stickers', value: 'anime' },
     { label: 'All Keychains', value: 'keychains' },
     { label: 'Anime Keychains', value: 'anime' },
     { label: 'Food Keychains', value: 'food' },
-    { label: 'Minimal Keychains', value: 'minimalist' },
     { label: 'Gaming Keychains', value: 'gaming' },
     { label: '❓ Frequently Asked Questions', value: 'faq' },
   ];
