@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { CartItem, Product, CaseOption } from '../types';
 import { saveCartToDatabase, removeItemFromCart as dbRemoveItem, updateCartItemQuantity as dbUpdateQuantity, clearCart as dbClearCart, loadCartFromDatabase } from '../lib/database';
 import { useAuthStore } from './authStore';
+import { toast } from '../hooks/use-toast';
 
 interface CartState {
   items: CartItem[];
@@ -22,9 +23,26 @@ export const useCartStore = create<CartState>()((set, get) => ({
       const userId = useAuthStore.getState().user?.id;
       if (!userId) {
         console.error('No user logged in');
+        toast({
+          title: 'Authentication required',
+          description: 'Please log in to add items to cart',
+          variant: 'destructive',
+        });
         return;
       }
 
+      // Validate product data
+      if (!product || !product.id || !product.name || typeof product.price !== 'number') {
+        console.error('Invalid product data:', product);
+        toast({
+          title: 'Invalid product',
+          description: 'Unable to add this item to cart',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Update state first (optimistic update)
       set((state) => {
         const currentItems = Array.isArray(state.items) ? state.items : [];
         const existingItem = currentItems.find(
@@ -33,22 +51,37 @@ export const useCartStore = create<CartState>()((set, get) => ({
         );
         
         if (existingItem) {
-          const updatedItems = currentItems.map((item) =>
-            item?.product?.id === product?.id && item?.selectedCase?.id === selectedCase?.id
-              ? { ...item, quantity: (item.quantity || 0) + 1 }
-              : item
-          );
-          saveCartToDatabase(userId, updatedItems);
-          return { items: updatedItems };
+          return {
+            items: currentItems.map((item) =>
+              item?.product?.id === product?.id && item?.selectedCase?.id === selectedCase?.id
+                ? { ...item, quantity: (item.quantity || 0) + 1 }
+                : item
+            )
+          };
         }
         
         const newItem: CartItem = { product, quantity: 1, selectedCase, customization };
-        const updatedItems = [...currentItems, newItem];
-        saveCartToDatabase(userId, updatedItems);
-        return { items: updatedItems };
+        return { items: [...currentItems, newItem] };
       });
-    } catch (error) {
+
+      // Then save to database (async)
+      const currentState = get();
+      await saveCartToDatabase(userId, currentState.items).catch((err) => {
+        console.error('Failed to save to database:', err);
+        // Don't remove from state - keep in local state even if DB save fails
+      });
+
+      toast({
+        title: 'Added to cart! 🎉',
+        description: `${product.name} has been added to your cart`,
+      });
+    } catch (error: any) {
       console.error('Error adding item to cart:', error);
+      toast({
+        title: 'Error adding to cart',
+        description: error?.message || 'Please try again',
+        variant: 'destructive',
+      });
     }
   },
   
@@ -57,12 +90,22 @@ export const useCartStore = create<CartState>()((set, get) => ({
       const userId = useAuthStore.getState().user?.id;
       if (!userId) return;
       
-      await dbRemoveItem(userId, productId);
+      // Update state first (optimistic)
       set((state) => ({
         items: state.items.filter((item) => item.product.id !== productId),
       }));
+
+      // Then update database
+      await dbRemoveItem(userId, productId).catch((err) => {
+        console.error('Failed to remove from database:', err);
+      });
     } catch (error) {
       console.error('Error removing item:', error);
+      toast({
+        title: 'Error removing item',
+        description: 'Please try again',
+        variant: 'destructive',
+      });
     }
   },
   
@@ -71,7 +114,7 @@ export const useCartStore = create<CartState>()((set, get) => ({
       const userId = useAuthStore.getState().user?.id;
       if (!userId) return;
       
-      await dbUpdateQuantity(userId, productId, quantity);
+      // Update state first (optimistic)
       set((state) => ({
         items: quantity <= 0
           ? state.items.filter((item) => item.product.id !== productId)
@@ -79,8 +122,18 @@ export const useCartStore = create<CartState>()((set, get) => ({
               item.product.id === productId ? { ...item, quantity } : item
             ),
       }));
+
+      // Then update database
+      await dbUpdateQuantity(userId, productId, quantity).catch((err) => {
+        console.error('Failed to update quantity in database:', err);
+      });
     } catch (error) {
       console.error('Error updating quantity:', error);
+      toast({
+        title: 'Error updating quantity',
+        description: 'Please try again',
+        variant: 'destructive',
+      });
     }
   },
   

@@ -6,58 +6,90 @@ import type { CartItem, Order } from '../types';
 // =====================================================
 
 export async function loadCartFromDatabase(userId: string): Promise<CartItem[]> {
-  const { data, error } = await supabase
-    .from('cart_items')
-    .select('*')
-    .eq('user_id', userId);
+  try {
+    const { data, error } = await supabase
+      .from('cart_items')
+      .select('*')
+      .eq('user_id', userId);
 
-  if (error) {
-    console.error('Error loading cart:', error);
+    if (error) {
+      console.error('Error loading cart:', error);
+      return [];
+    }
+
+    // Filter out any invalid items and map to CartItem format
+    return (data || [])
+      .filter((item) => item?.product_id && item?.product_name && item?.price)
+      .map((item) => ({
+        product: {
+          id: item.product_id,
+          name: item.product_name,
+          type: item.product_type || 'sticker',
+          category: item.product_category || 'standard',
+          price: parseFloat(item.price) || 0,
+          image: item.product_image || '',
+          description: '',
+        },
+        quantity: item.quantity || 1,
+        selectedCase: item.customizations?.selectedCase || undefined,
+        customization: item.customizations?.customization || undefined,
+      }));
+  } catch (error) {
+    console.error('Error in loadCartFromDatabase:', error);
     return [];
   }
-
-  return (data || []).map((item) => ({
-    product: {
-      id: item.product_id,
-      name: item.product_name,
-      type: item.product_type,
-      category: item.product_category,
-      price: parseFloat(item.price),
-      image: item.product_image,
-      description: '',
-    },
-    quantity: item.quantity,
-    selectedCase: item.customizations?.selectedCase,
-    customization: item.customizations?.customization,
-  }));
 }
 
 export async function saveCartToDatabase(userId: string, items: CartItem[]) {
-  // First, clear existing cart
-  await supabase.from('cart_items').delete().eq('user_id', userId);
+  try {
+    // First, clear existing cart
+    const { error: deleteError } = await supabase
+      .from('cart_items')
+      .delete()
+      .eq('user_id', userId);
 
-  if (items.length === 0) return;
+    if (deleteError) {
+      console.error('Error clearing cart:', deleteError);
+      // Don't throw - continue to try inserting new items
+    }
 
-  // Insert new items
-  const cartItems = items.map((item) => ({
-    user_id: userId,
-    product_id: item.product.id,
-    product_name: item.product.name,
-    product_type: item.product.type,
-    product_category: item.product.category,
-    product_image: item.product.image,
-    price: item.product.price,
-    quantity: item.quantity,
-    customizations: {
-      selectedCase: item.selectedCase,
-      customization: item.customization,
-    },
-  }));
+    if (items.length === 0) return;
 
-  const { error } = await supabase.from('cart_items').insert(cartItems);
+    // Filter out invalid items
+    const validItems = items.filter(
+      (item) => item?.product?.id && item?.product?.name && typeof item?.product?.price === 'number'
+    );
 
-  if (error) {
-    console.error('Error saving cart:', error);
+    if (validItems.length === 0) {
+      console.warn('No valid items to save to cart');
+      return;
+    }
+
+    // Insert new items
+    const cartItems = validItems.map((item) => ({
+      user_id: userId,
+      product_id: item.product.id,
+      product_name: item.product.name,
+      product_type: item.product.type || 'sticker',
+      product_category: item.product.category || 'standard',
+      product_image: item.product.image || '',
+      price: item.product.price,
+      quantity: item.quantity || 1,
+      customizations: item.selectedCase || item.customization ? {
+        selectedCase: item.selectedCase,
+        customization: item.customization,
+      } : null,
+    }));
+
+    const { error } = await supabase.from('cart_items').insert(cartItems);
+
+    if (error) {
+      console.error('Error saving cart to database:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in saveCartToDatabase:', error);
+    throw error;
   }
 }
 
