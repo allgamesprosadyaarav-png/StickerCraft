@@ -52,7 +52,7 @@ export function CartPage() {
   const subtotal = getTotal();
   const keychainCount = getKeychainCount();
   const offerApplied = shouldApplyOffer();
-  const freeStickersValue = offerApplied ? 5 * 10 : 0; // 5 stickers × ₹10
+  const freeStickersValue = offerApplied ? 5 * 9 : 0; // 5 stickers × ₹9
   
   // Apply loyalty discount
   const userTier = LOYALTY_TIERS.find((tier) => tier.name === user?.loyaltyTier);
