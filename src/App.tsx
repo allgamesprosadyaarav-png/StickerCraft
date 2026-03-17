@@ -13,7 +13,7 @@ import { Toaster } from './components/ui/toaster';
 import { FloatingCartWidget } from './components/features/FloatingCartWidget';
 import { Confetti } from './components/features/Confetti';
 import { AngilaAIButton } from './components/features/AngilaAIButton';
-
+import { MinimumOrderPopup } from './components/features/MinimumOrderPopup';
 import { LiveChatButton } from './components/features/LiveChatButton';
 import { Footer } from './components/layout/Footer';
 import { useCartStore } from './stores/cartStore';
@@ -67,6 +67,7 @@ function App() {
       <Confetti trigger={showConfetti} />
       <FloatingCartWidget onNavigateToCart={() => setCurrentPage('cart')} />
       <AngilaAIButton />
+      <MinimumOrderPopup />
       <LiveChatButton />
       
       <div className="relative z-10 flex-1">

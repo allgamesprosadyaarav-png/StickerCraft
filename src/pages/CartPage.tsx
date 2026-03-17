@@ -61,10 +61,17 @@ export function CartPage() {
   
   const total = subtotal - discountAmount;
   
-  // FREE DELIVERY ALWAYS - No delivery charges!
-  const deliveryFee = 0;
-  const finalTotal = total;
-  const FREE_DELIVERY_THRESHOLD = 50;
+  // Delivery fee logic:
+  // - Orders below ₹50: Cannot proceed (minimum order requirement)
+  // - Orders ₹50-59: ₹30 delivery fee
+  // - Orders ₹60+: FREE delivery
+  const MINIMUM_ORDER = 50;
+  const FREE_DELIVERY_THRESHOLD = 60;
+  const STANDARD_DELIVERY_FEE = 30;
+  
+  const deliveryFee = total >= FREE_DELIVERY_THRESHOLD ? 0 : STANDARD_DELIVERY_FEE;
+  const finalTotal = total + deliveryFee;
+  const canCheckout = total >= MINIMUM_ORDER;
 
   if (safeItems.length === 0) {
     return (
@@ -196,19 +203,32 @@ export function CartPage() {
                       <Truck className="w-4 h-4" />
                       <span>Delivery Fee</span>
                     </div>
-                    <span className="text-green-600 font-bold">FREE ✓</span>
+                    {deliveryFee === 0 ? (
+                      <span className="text-green-600 font-bold">FREE ✓</span>
+                    ) : (
+                      <span>₹{deliveryFee}</span>
+                    )}
                   </div>
                   
-                  {total >= FREE_DELIVERY_THRESHOLD ? (
+                  {total < MINIMUM_ORDER ? (
+                    <div className="bg-red-50 dark:bg-red-950 p-3 rounded-lg border-2 border-red-200 dark:border-red-800">
+                      <p className="text-sm text-red-700 dark:text-red-400 font-bold">
+                        ⚠️ Minimum order: ₹{MINIMUM_ORDER}
+                      </p>
+                      <p className="text-xs text-red-600 dark:text-red-500 mt-1">
+                        Add ₹{(MINIMUM_ORDER - total).toFixed(2)} more to place your order
+                      </p>
+                    </div>
+                  ) : total >= FREE_DELIVERY_THRESHOLD ? (
                     <div className="bg-green-50 dark:bg-green-950 p-2 rounded-lg border border-green-200 dark:border-green-800">
                       <p className="text-xs text-green-700 dark:text-green-400 font-medium">
-                        🎉 FREE delivery unlocked on orders over ₹50!
+                        🎉 FREE delivery unlocked on orders ₹{FREE_DELIVERY_THRESHOLD}+!
                       </p>
                     </div>
                   ) : (
                     <div className="bg-yellow-50 dark:bg-yellow-950 p-2 rounded-lg border border-yellow-200 dark:border-yellow-800">
                       <p className="text-xs text-yellow-700 dark:text-yellow-400">
-                        💡 Add ₹{(FREE_DELIVERY_THRESHOLD - total).toFixed(2)} more to qualify for the FREE delivery promotion!
+                        💡 Add ₹{(FREE_DELIVERY_THRESHOLD - total).toFixed(2)} more for FREE delivery!
                       </p>
                     </div>
                   )}
@@ -250,16 +270,19 @@ export function CartPage() {
                   className="w-full"
                   size="lg"
                   onClick={() => setShowCheckout(true)}
+                  disabled={!canCheckout}
                 >
-                  Proceed to Checkout
+                  {canCheckout ? 'Proceed to Checkout' : `Add ₹${(MINIMUM_ORDER - total).toFixed(0)} to Checkout`}
                 </Button>
                 
-                <div className="bg-green-50 dark:bg-green-950 p-3 rounded-lg border border-green-200 dark:border-green-800">
-                  <p className="text-xs text-green-700 dark:text-green-400 text-center font-medium flex items-center justify-center gap-1">
-                    <Truck className="w-4 h-4" />
-                    🎉 Enjoy FREE delivery on all orders!
-                  </p>
-                </div>
+                {canCheckout && (
+                  <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-xs text-blue-700 dark:text-blue-400 text-center font-medium flex items-center justify-center gap-1">
+                      <Truck className="w-4 h-4" />
+                      {deliveryFee === 0 ? '🎉 FREE delivery applied!' : `₹${deliveryFee} delivery fee • FREE at ₹${FREE_DELIVERY_THRESHOLD}+`}
+                    </p>
+                  </div>
+                )}
                 
                 <div className="bg-muted/50 p-3 rounded-lg">
                   <p className="text-xs text-muted-foreground text-center">
