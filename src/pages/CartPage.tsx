@@ -128,7 +128,13 @@ export function CartPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() => {
+                            try {
+                              updateQuantity(item.product.id, item.quantity - 1);
+                            } catch (e) {
+                              console.error('Update quantity error:', e);
+                            }
+                          }}
                         >
                           <Minus className="w-3 h-3" />
                         </Button>
@@ -136,7 +142,13 @@ export function CartPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          onClick={() => {
+                            try {
+                              updateQuantity(item.product.id, item.quantity + 1);
+                            } catch (e) {
+                              console.error('Update quantity error:', e);
+                            }
+                          }}
                         >
                           <Plus className="w-3 h-3" />
                         </Button>
@@ -150,7 +162,13 @@ export function CartPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => removeItem(item.product.id)}
+                        onClick={() => {
+                          try {
+                            removeItem(item.product.id);
+                          } catch (e) {
+                            console.error('Remove item error:', e);
+                          }
+                        }}
                         className="text-destructive hover:text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />

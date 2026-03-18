@@ -6,156 +6,148 @@ import { toast } from '../hooks/use-toast';
 
 interface CartState {
   items: CartItem[];
-  addItem: (product: Product, selectedCase?: CaseOption, customization?: string) => Promise<void>;
-  removeItem: (productId: string) => Promise<void>;
-  updateQuantity: (productId: string, quantity: number) => Promise<void>;
-  clearCart: () => Promise<void>;
+  addItem: (product: Product, selectedCase?: CaseOption, customization?: string) => void;
+  removeItem: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
   getTotal: () => number;
   getKeychainCount: () => number;
   shouldApplyOffer: () => boolean;
 }
 
+// Background database sync (completely non-blocking)
+let syncTimeout: NodeJS.Timeout | null = null;
+function scheduleDatabaseSync(userId: string, items: CartItem[]) {
+  if (syncTimeout) clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(() => {
+    saveCartToDatabase(userId, items)
+      .catch(err => console.log('Background sync failed (non-critical):', err));
+  }, 1000);
+}
+
 export const useCartStore = create<CartState>()((set, get) => ({
   items: [],
   
-  addItem: async (product, selectedCase, customization) => {
-    const userId = useAuthStore.getState().user?.id;
-    if (!userId) {
-      console.error('No user logged in');
+  addItem: (product, selectedCase, customization) => {
+    try {
+      const userId = useAuthStore.getState().user?.id;
+      if (!userId) {
+        toast({
+          title: 'Please log in',
+          description: 'You need to be logged in to add items to cart',
+        });
+        return;
+      }
+
+      // Strict validation
+      if (!product?.id || !product?.name || typeof product?.price !== 'number') {
+        console.error('Invalid product:', product);
+        toast({
+          title: 'Error',
+          description: 'Invalid product data',
+        });
+        return;
+      }
+
+      // Clean and freeze product data
+      const cleanProduct = Object.freeze({
+        id: String(product.id),
+        name: String(product.name),
+        type: product.type || 'sticker',
+        category: product.category || 'standard',
+        price: Number(product.price),
+        image: String(product.image || ''),
+        description: String(product.description || ''),
+      });
+
+      // Update state SYNCHRONOUSLY - no async operations here
+      const currentItems = [...(get().items || [])];
+      const existingItemIndex = currentItems.findIndex(
+        (item) => item?.product?.id === cleanProduct.id && 
+                  item?.selectedCase?.id === selectedCase?.id
+      );
+      
+      if (existingItemIndex >= 0) {
+        // Update existing item
+        currentItems[existingItemIndex] = {
+          ...currentItems[existingItemIndex],
+          quantity: currentItems[existingItemIndex].quantity + 1
+        };
+      } else {
+        // Add new item
+        currentItems.push({ 
+          product: cleanProduct, 
+          quantity: 1, 
+          selectedCase, 
+          customization 
+        });
+      }
+
+      // Update state immediately
+      set({ items: currentItems });
+
+      // Show success toast
       toast({
-        title: 'Authentication required',
-        description: 'Please log in to add items to cart',
-        variant: 'destructive',
+        title: '✅ Added to cart!',
+        description: cleanProduct.name,
       });
-      return;
-    }
 
-    // Validate product data with extensive checks
-    if (!product || 
-        !product.id || 
-        !product.name || 
-        typeof product.price !== 'number' || 
-        !product.type || 
-        !product.category ||
-        !product.image) {
-      console.error('Invalid product data:', product);
+      // Schedule background database sync (non-blocking)
+      scheduleDatabaseSync(userId, currentItems);
+    } catch (error) {
+      console.error('Cart error:', error);
       toast({
-        title: 'Invalid product',
-        description: 'Unable to add this item to cart. Please refresh and try again.',
-        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to add item. Please try again.',
       });
-      return;
     }
-
-    // Create a clean product object to avoid any reference issues
-    const cleanProduct = {
-      id: String(product.id),
-      name: String(product.name),
-      type: product.type,
-      category: product.category,
-      price: Number(product.price),
-      image: String(product.image),
-      description: product.description || '',
-    };
-
-    // Update state SYNCHRONOUSLY (no try-catch to avoid blocking)
-    const currentItems = Array.isArray(get().items) ? [...get().items].filter(item => item && item.product) : [];
-    const existingItem = currentItems.find(
-      (item) => item?.product?.id === cleanProduct.id && 
-      item?.selectedCase?.id === selectedCase?.id
-    );
-    
-    if (existingItem) {
-      set({
-        items: currentItems.map((item) =>
-          item?.product?.id === cleanProduct.id && item?.selectedCase?.id === selectedCase?.id
-            ? { ...item, quantity: (item.quantity || 0) + 1 }
-            : item
-        )
-      });
-    } else {
-      const newItem: CartItem = { 
-        product: cleanProduct, 
-        quantity: 1, 
-        selectedCase: selectedCase || undefined, 
-        customization: customization || undefined 
-      };
-      set({ items: [...currentItems, newItem] });
-    }
-
-    // Show success message immediately
-    toast({
-      title: 'Added to cart! 🎉',
-      description: `${cleanProduct.name} has been added to your cart`,
-    });
-
-    // Then save to database (completely async, fire-and-forget)
-    setTimeout(() => {
-      const currentState = get();
-      saveCartToDatabase(userId, currentState.items)
-        .catch(err => console.error('Failed to save to database (non-blocking):', err));
-    }, 500);
   },
   
-  removeItem: async (productId) => {
+  removeItem: (productId) => {
     try {
       const userId = useAuthStore.getState().user?.id;
       if (!userId) return;
       
-      // Update state first (optimistic)
-      set((state) => ({
-        items: state.items.filter((item) => item.product.id !== productId),
-      }));
+      // Update state immediately
+      const currentItems = get().items.filter((item) => item.product.id !== productId);
+      set({ items: currentItems });
 
-      // Then update database
-      await dbRemoveItem(userId, productId).catch((err) => {
-        console.error('Failed to remove from database:', err);
-      });
+      // Background sync
+      scheduleDatabaseSync(userId, currentItems);
     } catch (error) {
       console.error('Error removing item:', error);
-      toast({
-        title: 'Error removing item',
-        description: 'Please try again',
-        variant: 'destructive',
-      });
     }
   },
   
-  updateQuantity: async (productId, quantity) => {
+  updateQuantity: (productId, quantity) => {
     try {
       const userId = useAuthStore.getState().user?.id;
       if (!userId) return;
       
-      // Update state first (optimistic)
-      set((state) => ({
-        items: quantity <= 0
-          ? state.items.filter((item) => item.product.id !== productId)
-          : state.items.map((item) =>
-              item.product.id === productId ? { ...item, quantity } : item
-            ),
-      }));
+      // Update state immediately
+      const currentItems = quantity <= 0
+        ? get().items.filter((item) => item.product.id !== productId)
+        : get().items.map((item) =>
+            item.product.id === productId ? { ...item, quantity } : item
+          );
+      
+      set({ items: currentItems });
 
-      // Then update database
-      await dbUpdateQuantity(userId, productId, quantity).catch((err) => {
-        console.error('Failed to update quantity in database:', err);
-      });
+      // Background sync
+      scheduleDatabaseSync(userId, currentItems);
     } catch (error) {
       console.error('Error updating quantity:', error);
-      toast({
-        title: 'Error updating quantity',
-        description: 'Please try again',
-        variant: 'destructive',
-      });
     }
   },
   
-  clearCart: async () => {
+  clearCart: () => {
     try {
       const userId = useAuthStore.getState().user?.id;
-      if (userId) {
-        await dbClearCart(userId);
-      }
       set({ items: [] });
+      
+      if (userId) {
+        dbClearCart(userId).catch(err => console.log('Clear cart DB error:', err));
+      }
     } catch (error) {
       console.error('Error clearing cart:', error);
     }

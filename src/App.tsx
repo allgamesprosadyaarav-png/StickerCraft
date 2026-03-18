@@ -8,6 +8,7 @@ import { CustomDesignPage } from './pages/CustomDesignPage';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Header } from './components/layout/Header';
 import { FloatingStickers } from './components/layout/FloatingStickers';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import { Toaster } from './components/ui/toaster';
 import { FloatingCartWidget } from './components/features/FloatingCartWidget';
@@ -54,14 +55,15 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <>
+      <ErrorBoundary>
         <FloatingStickers />
         <AuthPage />
-      </>
+      </ErrorBoundary>
     );
   }
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen relative flex flex-col">
       <FloatingStickers />
       <Confetti trigger={showConfetti} />
@@ -85,6 +87,7 @@ function App() {
       <Footer />
       <Toaster />
     </div>
+    </ErrorBoundary>
   );
 }
 

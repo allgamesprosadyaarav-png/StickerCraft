@@ -40,20 +40,25 @@ export function ProductCard({ product }: ProductCardProps) {
   const badge = getBadge();
 
   const handleAddToCart = () => {
-    if (!canPurchase) {
-      toast({
-        title: 'Premium Required 👑',
-        description: 'Upgrade to Premium to access this exclusive product',
-        variant: 'destructive',
-      });
-      return;
-    }
+    try {
+      if (!canPurchase) {
+        toast({
+          title: 'Premium Required 👑',
+          description: 'Upgrade to Premium to access this exclusive product',
+          variant: 'destructive',
+        });
+        return;
+      }
 
-    addItem(product, selectedCase);
-    toast({
-      title: 'Added to cart! 🎉',
-      description: `${product.name} has been added to your cart.`,
-    });
+      // Call addItem (now synchronous)
+      addItem(product, selectedCase);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to add item. Please refresh the page.',
+      });
+    }
   };
 
   const finalPrice = product.price + (selectedCase?.priceModifier || 0);
