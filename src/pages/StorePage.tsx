@@ -25,8 +25,7 @@ import { AboutUs } from '../components/features/AboutUs';
 import { AchievementSystem } from '../components/features/AchievementSystem';
 import { DailyChallenges } from '../components/features/DailyChallenges';
 import { LimitedEditionDrops } from '../components/features/LimitedEditionDrops';
-import { StickerTrading } from '../components/features/StickerTrading';
-import { PhotoBoothMode } from '../components/features/PhotoBoothMode';
+
 
 import { Button } from '../components/ui/button';
 
@@ -46,7 +45,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
   const [showAchievements, setShowAchievements] = useState(false);
   const [showChallenges, setShowChallenges] = useState(false);
   const [showLimitedDrops, setShowLimitedDrops] = useState(false);
-  const [showTrading, setShowTrading] = useState(false);
 
   const allProductsToShow = filter === 'premium' ? ALL_PREMIUM_PRODUCTS : ALL_PRODUCTS;
 
@@ -100,7 +98,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
       {showAchievements && <AchievementSystem onClose={() => setShowAchievements(false)} />}
       {showChallenges && <DailyChallenges onClose={() => setShowChallenges(false)} />}
       {showLimitedDrops && <LimitedEditionDrops onClose={() => setShowLimitedDrops(false)} />}
-      {showTrading && <StickerTrading onClose={() => setShowTrading(false)} />}
       
       <div className="container mx-auto px-4 py-8">
       {/* Limited Edition Alert Banner */}
@@ -160,27 +157,7 @@ export function StorePage({ onNavigate }: StorePageProps) {
         </div>
       </div>
 
-      {/* NEW FEATURES SHOWCASE */}
-      <div className="mb-8 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 border-2 border-cyan-500/30 rounded-2xl p-6">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold mb-1">🚀 Creative Features</h2>
-          <p className="text-muted-foreground text-sm">Experience stickers in a whole new way!</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Button
-            onClick={() => setShowTrading(true)}
-            variant="outline"
-            className="flex-col h-auto py-6 gap-2 hover:scale-105 transition-transform bg-gradient-to-br from-green-500/10 to-emerald-500/10"
-          >
-            <div className="text-4xl">🔄</div>
-            <span className="font-semibold">Sticker Trading</span>
-            <span className="text-xs text-muted-foreground">Trade with collectors</span>
-          </Button>
-          <div className="flex items-center justify-center">
-            <PhotoBoothMode />
-          </div>
-        </div>
-      </div>
+
 
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
