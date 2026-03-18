@@ -43,11 +43,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
   const user = useAuthStore((state) => state.user);
 
   // Creative features modals
-  const [showQuiz, setShowQuiz] = useState(false);
-  const [showMysteryBox, setShowMysteryBox] = useState(false);
-  const [showScratchCard, setShowScratchCard] = useState(false);
-  const [showMoodSelector, setShowMoodSelector] = useState(false);
-  const [showCollection, setShowCollection] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showChallenges, setShowChallenges] = useState(false);
   const [showLimitedDrops, setShowLimitedDrops] = useState(false);
@@ -102,27 +97,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
       <AIPromoCorner onNavigate={() => onNavigate('custom')} />
       
       {/* Creative Features Modals */}
-      {showQuiz && (
-        <PersonalityQuiz
-          onClose={() => setShowQuiz(false)}
-          onComplete={(recommendations) => {
-            setMoodRecommendations(recommendations);
-            setFilter('all');
-          }}
-        />
-      )}
-      {showMysteryBox && <MysteryBox onClose={() => setShowMysteryBox(false)} />}
-      {showScratchCard && <ScratchCard onClose={() => setShowScratchCard(false)} />}
-      {showMoodSelector && (
-        <MoodSelector
-          onClose={() => setShowMoodSelector(false)}
-          onSelect={(products) => {
-            setMoodRecommendations(products);
-            setFilter('all');
-          }}
-        />
-      )}
-      {showCollection && <CollectionAlbum onClose={() => setShowCollection(false)} />}
       {showAchievements && <AchievementSystem onClose={() => setShowAchievements(false)} />}
       {showChallenges && <DailyChallenges onClose={() => setShowChallenges(false)} />}
       {showLimitedDrops && <LimitedEditionDrops onClose={() => setShowLimitedDrops(false)} />}
@@ -151,65 +125,6 @@ export function StorePage({ onNavigate }: StorePageProps) {
       <PremiumBanner />
       <SocialBanner />
       <SpecialOfferBanner />
-      
-      {/* Creative Features Bar */}
-      <div className="mb-8 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border-2 border-primary/20 rounded-2xl p-6">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold mb-1">🎮 Fun Zone</h2>
-          <p className="text-muted-foreground text-sm">Try our exciting features!</p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-
-          <Button
-            onClick={() => setShowQuiz(true)}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform"
-          >
-            <div className="text-3xl">🎭</div>
-            <span className="text-xs font-semibold">Personality Quiz</span>
-          </Button>
-          <Button
-            onClick={() => setShowMysteryBox(true)}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform"
-          >
-            <div className="text-3xl">📦</div>
-            <span className="text-xs font-semibold">Mystery Box</span>
-          </Button>
-          <Button
-            onClick={() => setShowScratchCard(true)}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform"
-          >
-            <div className="text-3xl">🎫</div>
-            <span className="text-xs font-semibold">Scratch Card</span>
-          </Button>
-          <Button
-            onClick={() => setShowMoodSelector(true)}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform"
-          >
-            <div className="text-3xl">😊</div>
-            <span className="text-xs font-semibold">Mood Picker</span>
-          </Button>
-          <Button
-            onClick={() => setShowCollection(true)}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform"
-          >
-            <div className="text-3xl">🏆</div>
-            <span className="text-xs font-semibold">My Collection</span>
-          </Button>
-          <Button
-            onClick={() => onNavigate('custom')}
-            variant="outline"
-            className="flex-col h-auto py-4 gap-2 hover:scale-105 transition-transform bg-gradient-to-br from-purple-500/20 to-pink-500/20"
-          >
-            <div className="text-3xl">✨</div>
-            <span className="text-xs font-semibold">AI Generator</span>
-          </Button>
-        </div>
-      </div>
 
       {/* NEW FEATURES BAR */}
       <div className="mb-8 bg-gradient-to-r from-yellow-400/10 via-orange-500/10 to-red-500/10 border-2 border-orange-500/30 rounded-2xl p-6">
