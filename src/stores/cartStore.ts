@@ -19,102 +19,82 @@ export const useCartStore = create<CartState>()((set, get) => ({
   items: [],
   
   addItem: async (product, selectedCase, customization) => {
-    try {
-      const userId = useAuthStore.getState().user?.id;
-      if (!userId) {
-        console.error('No user logged in');
-        toast({
-          title: 'Authentication required',
-          description: 'Please log in to add items to cart',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Validate product data with extensive checks
-      if (!product || 
-          !product.id || 
-          !product.name || 
-          typeof product.price !== 'number' || 
-          !product.type || 
-          !product.category ||
-          !product.image) {
-        console.error('Invalid product data:', product);
-        toast({
-          title: 'Invalid product',
-          description: 'Unable to add this item to cart. Please refresh and try again.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // Create a clean product object to avoid any reference issues
-      const cleanProduct = {
-        id: String(product.id),
-        name: String(product.name),
-        type: product.type,
-        category: product.category,
-        price: Number(product.price),
-        image: String(product.image),
-        description: product.description || '',
-      };
-
-      // Update state first (optimistic update)
-      set((state) => {
-        try {
-          const currentItems = Array.isArray(state.items) ? state.items.filter(item => item && item.product) : [];
-          const existingItem = currentItems.find(
-            (item) => item?.product?.id === cleanProduct.id && 
-            item?.selectedCase?.id === selectedCase?.id
-          );
-          
-          if (existingItem) {
-            return {
-              items: currentItems.map((item) =>
-                item?.product?.id === cleanProduct.id && item?.selectedCase?.id === selectedCase?.id
-                  ? { ...item, quantity: (item.quantity || 0) + 1 }
-                  : item
-              ).filter(item => item && item.product)
-            };
-          }
-          
-          const newItem: CartItem = { 
-            product: cleanProduct, 
-            quantity: 1, 
-            selectedCase: selectedCase || undefined, 
-            customization: customization || undefined 
-          };
-          return { items: [...currentItems, newItem] };
-        } catch (stateError) {
-          console.error('Error updating state:', stateError);
-          return state; // Return unchanged state on error
-        }
-      });
-
-      // Show success message immediately
+    const userId = useAuthStore.getState().user?.id;
+    if (!userId) {
+      console.error('No user logged in');
       toast({
-        title: 'Added to cart! 🎉',
-        description: `${cleanProduct.name} has been added to your cart`,
-      });
-
-      // Then save to database (async, non-blocking)
-      setTimeout(async () => {
-        try {
-          const currentState = get();
-          await saveCartToDatabase(userId, currentState.items);
-        } catch (err) {
-          console.error('Failed to save to database:', err);
-          // Don't show error to user - cart still works locally
-        }
-      }, 100);
-    } catch (error: any) {
-      console.error('Error adding item to cart:', error);
-      toast({
-        title: 'Error adding to cart',
-        description: 'Please refresh the page and try again',
+        title: 'Authentication required',
+        description: 'Please log in to add items to cart',
         variant: 'destructive',
       });
+      return;
     }
+
+    // Validate product data with extensive checks
+    if (!product || 
+        !product.id || 
+        !product.name || 
+        typeof product.price !== 'number' || 
+        !product.type || 
+        !product.category ||
+        !product.image) {
+      console.error('Invalid product data:', product);
+      toast({
+        title: 'Invalid product',
+        description: 'Unable to add this item to cart. Please refresh and try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Create a clean product object to avoid any reference issues
+    const cleanProduct = {
+      id: String(product.id),
+      name: String(product.name),
+      type: product.type,
+      category: product.category,
+      price: Number(product.price),
+      image: String(product.image),
+      description: product.description || '',
+    };
+
+    // Update state SYNCHRONOUSLY (no try-catch to avoid blocking)
+    const currentItems = Array.isArray(get().items) ? [...get().items].filter(item => item && item.product) : [];
+    const existingItem = currentItems.find(
+      (item) => item?.product?.id === cleanProduct.id && 
+      item?.selectedCase?.id === selectedCase?.id
+    );
+    
+    if (existingItem) {
+      set({
+        items: currentItems.map((item) =>
+          item?.product?.id === cleanProduct.id && item?.selectedCase?.id === selectedCase?.id
+            ? { ...item, quantity: (item.quantity || 0) + 1 }
+            : item
+        )
+      });
+    } else {
+      const newItem: CartItem = { 
+        product: cleanProduct, 
+        quantity: 1, 
+        selectedCase: selectedCase || undefined, 
+        customization: customization || undefined 
+      };
+      set({ items: [...currentItems, newItem] });
+    }
+
+    // Show success message immediately
+    toast({
+      title: 'Added to cart! 🎉',
+      description: `${cleanProduct.name} has been added to your cart`,
+    });
+
+    // Then save to database (completely async, fire-and-forget)
+    setTimeout(() => {
+      const currentState = get();
+      saveCartToDatabase(userId, currentState.items)
+        .catch(err => console.error('Failed to save to database (non-blocking):', err));
+    }, 500);
   },
   
   removeItem: async (productId) => {
