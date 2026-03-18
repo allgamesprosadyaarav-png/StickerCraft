@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Truck, ShoppingBag } from 'lucide-react';
 import { Button } from '../ui/button';
-import deliveryMascot from '@/assets/delivery-mascot.png';
+import stickerRobotMascot from '@/assets/sticker-robot-mascot.jpg';
 
 export function MinimumOrderPopup() {
   const [isVisible, setIsVisible] = useState(true);
@@ -21,15 +21,15 @@ export function MinimumOrderPopup() {
       ) : (
         <div className="glass bg-white/95 p-4 rounded-2xl shadow-2xl border-2 border-primary/20 max-w-xs">
           <div className="flex items-start gap-3">
-            {/* Male Cartoon Mascot */}
+            {/* Sticker Robot Mascot */}
             <div className="flex-shrink-0">
-              <div className="relative bg-gradient-to-br from-blue-50 to-orange-50 dark:from-blue-950 dark:to-orange-950 rounded-2xl p-2">
+              <div className="relative bg-gradient-to-br from-blue-100 to-teal-100 dark:from-blue-950 dark:to-teal-950 rounded-2xl p-1 shadow-lg">
                 <img
-                  src={deliveryMascot}
-                  alt="Delivery Mascot"
-                  className="w-24 h-24 object-contain"
+                  src={stickerRobotMascot}
+                  alt="Sticker Robot Mascot"
+                  className="w-20 h-20 object-cover rounded-xl"
                 />
-                <div className="absolute -top-1 -right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center animate-pulse">
                   <span className="text-white text-xs">✓</span>
                 </div>
               </div>
