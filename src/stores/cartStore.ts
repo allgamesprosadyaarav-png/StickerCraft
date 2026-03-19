@@ -93,10 +93,9 @@ export const useCartStore = create<CartState>()((set, get) => ({
       scheduleDatabaseSync(userId, currentItems);
     } catch (error) {
       console.error('Cart error:', error);
-    // toast({
-//   title: 'Error',
-//   description: 'Invalid product data',
-// });
+      toast({
+        title: 'Error',
+        description: 'Failed to add item. Please try again.',
       });
     }
   },
