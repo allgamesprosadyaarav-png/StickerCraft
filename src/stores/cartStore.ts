@@ -28,55 +28,11 @@ function scheduleDatabaseSync(userId: string, items: CartItem[]) {
 export const useCartStore = create<CartState>()((set, get) => ({
   items: [],
   
-  addItem: addItem: (product, selectedCase, customization) => {
-  try {
-    console.log("CLICKED:", product);
-
-    // ✅ HARD SAFETY
-    if (!product || typeof product !== "object") {
-      console.error("Invalid product:", product);
-      return;
-    }
-
-    // ✅ SAFE auth access
-    let userId = null;
+  addItem: (product, selectedCase, customization) => {
     try {
-      userId = useAuthStore?.getState?.()?.user?.id || null;
-    } catch (e) {
-      console.error("Auth store crash:", e);
-    }
-
-    // ❌ REMOVE toast for now
-    if (!userId) {
-      console.warn("User not logged in");
-      return;
-    }
-
-    const cleanProduct = {
-      id: String(product?.id || ""),
-      name: String(product?.name || "Unknown"),
-      type: product?.type || "sticker",
-      category: product?.category || "standard",
-      price: Number(product?.price || 0),
-      image: String(product?.image || ""),
-      description: String(product?.description || ""),
-    };
-
-    const currentItems = Array.isArray(get().items) ? [...get().items] : [];
-
-    currentItems.push({
-      product: cleanProduct,
-      quantity: 1,
-      selectedCase,
-      customization,
-    });
-
-    set({ items: currentItems });
-
-  } catch (error) {
-    console.error("ADD ITEM CRASH:", error);
-  }
-},
+      const userId = useAuthStore.getState().user?.id;
+      if (!userId) {
+        console.warn('User not logged in');
         return;
       }
 
