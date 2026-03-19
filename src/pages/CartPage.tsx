@@ -98,7 +98,7 @@ export function CartPage() {
             {safeItems.map((item) => {
               try {
                 return (
-                 key={`${item.product.id}-${item.selectedCase?.id}`} className="glass">
+                  <Card key={`${item.product.id}-${item.selectedCase?.id}`} className="glass">
                     <CardContent className="p-4">
                       <div className="flex gap-4">
                         <img
