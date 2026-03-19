@@ -28,23 +28,10 @@ function scheduleDatabaseSync(userId: string, items: CartItem[]) {
 export const useCartStore = create<CartState>()((set, get) => ({
   items: [],
   
-  addItemaddItem: (product) => {
-  try {
-    console.log("CLICKED:", product);
-
-    const currentItems = Array.isArray(get().items) ? [...get().items] : [];
-
-    currentItems.push({
-      product: product || { id: "test", name: "test", price: 0 },
-      quantity: 1,
-    });
-
-    set({ items: currentItems });
-
-  } catch (err) {
-    console.error("CRASH:", err);
-  }
-},
+  addItem: (product, selectedCase, customization) => {
+    try {
+      const userId = useAuthStore.getState().user?.id;
+      if (!userId) return;
 
       // Strict validation
       if (!product?.id || !product?.name || typeof product?.price !== 'number') {
